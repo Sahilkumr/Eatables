@@ -1,11 +1,14 @@
 import 'package:eatables/data/dummy_data.dart';
 import 'package:eatables/models/category.dart';
+import 'package:eatables/models/meal.dart';
 import 'package:eatables/screens/meals.dart';
 import 'package:eatables/widgets/category_grid_item.dart';
 import 'package:flutter/material.dart';
 
 class CategoriesScreen extends StatelessWidget {
-  const CategoriesScreen({super.key});
+  const CategoriesScreen({super.key, required this.onToggleFavourite, required this.favMeals});
+  final void Function(Meal meal) onToggleFavourite;
+  final List<Meal> favMeals;
 
   void _selectedCategory(BuildContext context, Category category) {
     final filteredMeal = dummyMeals
@@ -20,6 +23,8 @@ class CategoriesScreen extends StatelessWidget {
         builder: (ctx) => MealScreen(
           title: category.title,
           meals: filteredMeal,
+           onToggleFavourite:onToggleFavourite,
+           favMeals: favMeals,
         ),
       ),
     );
@@ -27,25 +32,20 @@ class CategoriesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Eatables Category'),
+    return GridView(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        mainAxisSpacing: 20,
+        childAspectRatio: 1.5,
+        crossAxisSpacing: 20,
       ),
-      body: GridView(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          mainAxisSpacing: 20,
-          childAspectRatio: 1.5,
-          crossAxisSpacing: 20,
-        ),
-        children: [
-          for (final category in availableCategories)
-            CategoryItem(
-              category: category,
-              onCategoryItemSelected: () => _selectedCategory(context, category),
-            )
-        ],
-      ),
+      children: [
+        for (final category in availableCategories)
+          CategoryItem(
+            category: category,
+            onCategoryItemSelected: () => _selectedCategory(context, category),
+          )
+      ],
     );
   }
 }
