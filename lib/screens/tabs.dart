@@ -1,6 +1,7 @@
 import 'package:eatables/models/meal.dart';
 import 'package:eatables/screens/categories.dart';
 import 'package:eatables/screens/meals.dart';
+import 'package:eatables/widgets/main_drawer.dart';
 import 'package:flutter/material.dart';
 
 class TabsScreen extends StatefulWidget {
@@ -29,16 +30,25 @@ class _TabsScreenState extends State<TabsScreen> {
     }
   }
 
-  void _showInfoMessage(String message){
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content:  Text(message),duration:const Duration(seconds: 2),)
-    );
+  void _showInfoMessage(String message) {
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(message),
+      duration: const Duration(seconds: 2),
+    ));
   }
 
   void _selectPage(int index) {
     setState(() {
       _selectedPageIndex = index;
     });
+  }
+
+  void _setSelectedDrawerOption(String drawerOption) {
+    if (drawerOption == 'Filters') {
+    } else {
+      Navigator.of(context).pop();
+    }
   }
 
   @override
@@ -62,6 +72,7 @@ class _TabsScreenState extends State<TabsScreen> {
         title: Text(activeScreenTitle),
       ),
       body: activeScreen,
+      drawer: MainDrawer(onSelectDrawerOption: _setSelectedDrawerOption),
       bottomNavigationBar: BottomNavigationBar(
         onTap: _selectPage,
         currentIndex: _selectedPageIndex,
