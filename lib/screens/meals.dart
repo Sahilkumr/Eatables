@@ -10,7 +10,7 @@ class MealScreen extends StatelessWidget {
   });
 
   final String? title;
-  final List<Meal> meals; 
+  final List<Meal> meals;
 
   @override
   Widget build(BuildContext context) {

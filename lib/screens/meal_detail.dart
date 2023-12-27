@@ -27,8 +27,9 @@ class MealDetailScreen extends ConsumerWidget {
                     .toggleFavouriteMeals(meal);
                 ScaffoldMessenger.of(context).clearSnackBars();
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text(
-                      isFavAdded ? 'Meal Added To Favourites.' : 'Meal Removed.'),
+                  content: Text(isFavAdded
+                      ? 'Meal Added To Favourites.'
+                      : 'Meal Removed.'),
                   duration: const Duration(seconds: 2),
                 ));
               },
@@ -42,9 +43,12 @@ class MealDetailScreen extends ConsumerWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            FadeInImage(
-              placeholder: MemoryImage(kTransparentImage),
-              image: NetworkImage(meal.imageUrl),
+            Hero(
+              tag: meal.id,
+              child: FadeInImage(
+                placeholder: MemoryImage(kTransparentImage),
+                image: NetworkImage(meal.imageUrl),
+              ),
             ),
             const SizedBox(
               height: 14,
