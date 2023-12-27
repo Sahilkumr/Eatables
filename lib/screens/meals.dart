@@ -3,18 +3,24 @@ import 'package:eatables/widgets/meal_item.dart';
 import 'package:flutter/material.dart';
 
 class MealScreen extends StatelessWidget {
-  const MealScreen({super.key, this.title, required this.favMeals, required this.meals,required this.onToggleFavourite});
+  const MealScreen({
+    super.key,
+    this.title,
+    required this.meals,
+  });
 
   final String? title;
-  final List<Meal> meals; // using the meals model to get the data.
-  final void Function(Meal meal) onToggleFavourite;
-  final List<Meal> favMeals;
+  final List<Meal> meals; 
 
   @override
   Widget build(BuildContext context) {
     Widget bodyContent = ListView.builder(
         itemCount: meals.length,
-        itemBuilder: (ctx, index) => MealItem(meal: meals[index],onToggleFavourite: onToggleFavourite,favMeals: favMeals,));
+        itemBuilder: (ctx, index) => MealItem(
+              meal: meals[index],
+              // onToggleFavourite: onToggleFavourite,
+              favMeals: meals,
+            ));
 
     if (meals.isEmpty) {
       bodyContent = Center(

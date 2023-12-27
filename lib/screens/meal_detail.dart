@@ -1,28 +1,38 @@
 import 'package:eatables/models/meal.dart';
+import 'package:eatables/providers/favourite_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:transparent_image/transparent_image.dart';
 
-class MealDetailScreen extends StatelessWidget {
+class MealDetailScreen extends ConsumerWidget {
   const MealDetailScreen({
     super.key,
     required this.meal,
-    required this.onToggleFavourite,
     required this.favMeals,
   });
 
   final Meal meal;
   final List<Meal> favMeals;
-  final void Function(Meal meal) onToggleFavourite;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
         title: Text(meal.title),
         actions: [
           IconButton(
-              onPressed: () { onToggleFavourite(meal);},
-              icon:  Icon(
+              onPressed: () {
+                final isFavAdded = ref
+                    .read(favouriteMealsProvider.notifier)
+                    .toggleFavouriteMeals(meal);
+                ScaffoldMessenger.of(context).clearSnackBars();
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text(
+                      isFavAdded ? 'Meal Added To Favourites.' : 'Meal Removed.'),
+                  duration: const Duration(seconds: 2),
+                ));
+              },
+              icon: Icon(
                 Icons.star,
                 color: favMeals.contains(meal) ? Colors.yellow : Colors.black,
                 size: 28,

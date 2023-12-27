@@ -1,42 +1,46 @@
-import 'package:eatables/models/meal.dart';
+import 'package:eatables/providers/favourite_provider.dart';
+import 'package:eatables/providers/filters_provider.dart';
+import 'package:eatables/providers/meal_provider.dart';
 import 'package:eatables/screens/categories.dart';
+import 'package:eatables/screens/filters.dart';
 import 'package:eatables/screens/meals.dart';
 import 'package:eatables/widgets/main_drawer.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class TabsScreen extends StatefulWidget {
+const kinitialFilters = {
+  Filter.glutenFree: false,
+  Filter.lactoseFree: false,
+  Filter.vegetarian: false,
+  Filter.vegan: false
+};
+
+class TabsScreen extends ConsumerStatefulWidget {
   const TabsScreen({super.key});
 
   @override
-  State<TabsScreen> createState() => _TabsScreenState();
+  ConsumerState<TabsScreen> createState() => _TabsScreenState();
 }
 
-class _TabsScreenState extends State<TabsScreen> {
+class _TabsScreenState extends ConsumerState<TabsScreen> {
   int _selectedPageIndex = 0;
-  final List<Meal> favMeals = [];
+  // final List<Meal> favMeals = [];
+  Map<Filter, bool> _selectedFitlers = kinitialFilters;
 
-  void _toggleFavMeals(Meal meal) {
-    final mealExists = favMeals.contains(meal);
-    if (mealExists) {
-      setState(() {
-        _showInfoMessage('Meal Already Exist.');
-        favMeals.remove(meal);
-      });
-    } else {
-      setState(() {
-        _showInfoMessage('Meal Added to Favourites.');
-        favMeals.add(meal);
-      });
-    }
-  }
-
-  void _showInfoMessage(String message) {
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(message),
-      duration: const Duration(seconds: 2),
-    ));
-  }
+  // void _toggleFavMeals(Meal meal) {
+  //   final mealExists = favMeals.contains(meal);
+  //   if (mealExists) {
+  //     setState(() {
+  //       _showInfoMessage('Meal Already Exist.');
+  //       favMeals.remove(meal);
+  //     });
+  //   } else {
+  //     setState(() {
+  //       _showInfoMessage('Meal Added to Favourites.');
+  //       favMeals.add(meal);
+  //     });
+  //   }
+  // }
 
   void _selectPage(int index) {
     setState(() {
@@ -44,25 +48,52 @@ class _TabsScreenState extends State<TabsScreen> {
     });
   }
 
-  void _setSelectedDrawerOption(String drawerOption) {
+  void _setSelectedDrawerOption(String drawerOption) async {
+    Navigator.of(context).pop();
     if (drawerOption == 'Filters') {
-    } else {
-      Navigator.of(context).pop();
+      final result = await Navigator.of(context).push<Map<Filter, bool>>(
+        MaterialPageRoute(
+          builder: (ctx) => const FilterScreen(),
+        ),
+      );
+      setState(() {
+        _selectedFitlers = result ?? kinitialFilters;
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final meals = ref.watch(mealsProvider);
+    final availableMeals = meals.where((meal) {
+      if (_selectedFitlers[Filter.glutenFree]! && !meal.isGlutenFree) {
+        return false;
+      }
+      if (_selectedFitlers[Filter.vegetarian]! && !meal.isVegetarian) {
+        return false;
+      }
+      if (_selectedFitlers[Filter.vegan]! && !meal.isVegan) {
+        return false;
+      }
+      if (_selectedFitlers[Filter.lactoseFree]! && !meal.isLactoseFree) {
+        return false;
+      }
+      return true;
+    }).toList();
+
     Widget activeScreen = CategoriesScreen(
-      onToggleFavourite: _toggleFavMeals,
-      favMeals: favMeals,
+      // onToggleFavourite: _toggleFavMeals,
+      favMeals: ref.watch(favouriteMealsProvider),
     );
     var activeScreenTitle = 'Categories';
+
+    final favouriteMeals = ref.watch(favouriteMealsProvider);
+
     if (_selectedPageIndex == 1) {
       activeScreen = MealScreen(
-        meals: favMeals,
-        onToggleFavourite: _toggleFavMeals,
-        favMeals: favMeals,
+        meals: favouriteMeals,
+        // onToggleFavourite: _toggleFavMeals,
+        // favMeals: favouriteMeals,
       );
       activeScreenTitle = 'Your Favourite';
     }

@@ -6,8 +6,7 @@ import 'package:eatables/widgets/category_grid_item.dart';
 import 'package:flutter/material.dart';
 
 class CategoriesScreen extends StatelessWidget {
-  const CategoriesScreen({super.key, required this.onToggleFavourite, required this.favMeals});
-  final void Function(Meal meal) onToggleFavourite;
+  const CategoriesScreen({super.key, required this.favMeals});
   final List<Meal> favMeals;
 
   void _selectedCategory(BuildContext context, Category category) {
@@ -23,8 +22,8 @@ class CategoriesScreen extends StatelessWidget {
         builder: (ctx) => MealScreen(
           title: category.title,
           meals: filteredMeal,
-           onToggleFavourite:onToggleFavourite,
-           favMeals: favMeals,
+          //  onToggleFavourite:onToggleFavourite,
+          //  favMeals: favMeals,
         ),
       ),
     );

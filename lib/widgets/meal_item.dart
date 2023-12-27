@@ -8,11 +8,11 @@ class MealItem extends StatelessWidget {
   const MealItem({
     super.key,
     required this.meal,
-    required this.onToggleFavourite,
+    // required this.onToggleFavourite,
     required this.favMeals,
   });
 
-  final void Function(Meal meal) onToggleFavourite;
+  // final void Function(Meal meal) onToggleFavourite;
   final List<Meal> favMeals;
 
   void _mealDetails(BuildContext context) {
@@ -20,7 +20,7 @@ class MealItem extends StatelessWidget {
       context,
       MaterialPageRoute(
         builder: (ctx) =>
-            MealDetailScreen(meal: meal ,onToggleFavourite: onToggleFavourite,favMeals: favMeals),
+            MealDetailScreen(meal: meal ,favMeals: favMeals),
       ),
     );
   }
